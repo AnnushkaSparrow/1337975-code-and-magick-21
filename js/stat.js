@@ -14,15 +14,14 @@ const BAR_HEIGHT = 150;
 const GAP = 50;
 
 
-let renderCloud = (ctx, x, y, color) => {
+const renderRect = (ctx, x, y, width, height, color) => {
   ctx.fillStyle = color;
-  ctx.fillRect(x, y, CLOUD_WIDTH, CLOUD_HEIGHT);
+  ctx.fillRect(x, y, width, height);
 };
 
-
-let getMaxElement = (arr) =>{
+const getMaxElement = (arr) =>{
   let maxElement = arr[0];
-  arr.forEach(function (e) {
+  arr.forEach((e) => {
     if (e > maxElement) {
       maxElement = e;
     }
@@ -30,37 +29,35 @@ let getMaxElement = (arr) =>{
   return maxElement;
 };
 
+const renderRandomColor = () =>
+  `hsl(230, 100%, ${100 * Math.random()}%)`;
+
+const setTextStyle = (ctx, fontSizeAndFamily, color, text1, textX1, textY1, text2, textX2, textY2) => {
+  ctx.font = fontSizeAndFamily;
+  ctx.fillStyle = color;
+  ctx.fillText(text1, textX1, textY1);
+  ctx.fillText(text2, textX2, textY2);
+};
+
 
 window.renderStatistics = (ctx, names, times) => {
-  renderCloud(ctx, CLOUD_X + GAP_CLOUD, CLOUD_Y + GAP_CLOUD, `rgba(0, 0, 0, 0.7)`);
-  renderCloud(ctx, CLOUD_X, CLOUD_Y, `#fff`);
-
-  ctx.font = `16px PT Mono`;
-  ctx.fillStyle = `#000`;
-  ctx.fillText(`Ура вы победили!`, TEXT_X, TEXT_Y);
-  ctx.fillText(`Список результатов:`, TEXT_X, TEXT_Y + TEXT_GAP);
-
+  renderRect(ctx, CLOUD_X + GAP_CLOUD, CLOUD_Y + GAP_CLOUD, CLOUD_WIDTH, CLOUD_HEIGHT, `rgba(0, 0, 0, 0.7)`);
+  renderRect(ctx, CLOUD_X, CLOUD_Y, CLOUD_WIDTH, CLOUD_HEIGHT, `#fff`);
+  setTextStyle(ctx, `16px PT Mono`, `#000`, `Ура вы победили!`, TEXT_X, TEXT_Y, `Список результатов:`, TEXT_X, TEXT_Y + TEXT_GAP);
 
   let maxTime = getMaxElement(times);
-
-  let randomColor = () => {
-    return `hsl(` + 230 + `,` + 100 + `%,` + (100 * Math.random()) + `%)`;
-  };
-
 
   names.forEach(function (name, index) {
     if (name === `Вы`) {
       ctx.fillStyle = `rgba(255, 0, 0, 1)`;
     } else {
-      ctx.fillStyle = randomColor();
+      ctx.fillStyle = renderRandomColor();
     }
 
-    ctx.fillRect(BAR_X + (BAR_WIDTH + GAP) * index, BAR_Y, BAR_WIDTH, -BAR_HEIGHT * times[index] / maxTime);
-
-    ctx.font = `16px PT Mono`;
-    ctx.fillStyle = `#000`;
-    ctx.fillText(Math.floor(times[index]), BAR_X + (BAR_WIDTH + GAP) * index, BAR_Y - (BAR_HEIGHT * times[index] / maxTime) - 5);
-    ctx.fillText(name, BAR_X + (BAR_WIDTH + GAP) * index, BAR_Y + 20);
+    renderRect(ctx, BAR_X + (BAR_WIDTH + GAP) * index, BAR_Y, BAR_WIDTH, -BAR_HEIGHT * times[index] / maxTime);
+    setTextStyle(ctx, `16px PT Mono`, `#000`,
+        Math.floor(times[index]), BAR_X + (BAR_WIDTH + GAP) * index, BAR_Y - (BAR_HEIGHT * times[index] / maxTime) - 5,
+        name, BAR_X + (BAR_WIDTH + GAP) * index, BAR_Y + 20);
   }
   );
 };
