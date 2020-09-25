@@ -19,7 +19,7 @@ const renderRect = (ctx, x, y, width, height, color) => {
   ctx.fillRect(x, y, width, height);
 };
 
-const getMaxElement = (arr) =>{
+const getMaxElement = (arr) => {
   let maxElement = arr[0];
   arr.forEach((e) => {
     if (e > maxElement) {
@@ -29,10 +29,10 @@ const getMaxElement = (arr) =>{
   return maxElement;
 };
 
-const renderRandomColor = () =>
+const getRandomColor = () =>
   `hsl(230, 100%, ${100 * Math.random()}%)`;
 
-const setTextStyle = (ctx, fontSizeAndFamily, color, text1, textX1, textY1, text2, textX2, textY2) => {
+const renderText = (ctx, fontSizeAndFamily, color, text1, textX1, textY1, text2, textX2, textY2) => {
   ctx.font = fontSizeAndFamily;
   ctx.fillStyle = color;
   ctx.fillText(text1, textX1, textY1);
@@ -43,19 +43,16 @@ const setTextStyle = (ctx, fontSizeAndFamily, color, text1, textX1, textY1, text
 window.renderStatistics = (ctx, names, times) => {
   renderRect(ctx, CLOUD_X + GAP_CLOUD, CLOUD_Y + GAP_CLOUD, CLOUD_WIDTH, CLOUD_HEIGHT, `rgba(0, 0, 0, 0.7)`);
   renderRect(ctx, CLOUD_X, CLOUD_Y, CLOUD_WIDTH, CLOUD_HEIGHT, `#fff`);
-  setTextStyle(ctx, `16px PT Mono`, `#000`, `Ура вы победили!`, TEXT_X, TEXT_Y, `Список результатов:`, TEXT_X, TEXT_Y + TEXT_GAP);
+  renderText(ctx, `16px PT Mono`, `#000`, `Ура вы победили!`, TEXT_X, TEXT_Y, `Список результатов:`, TEXT_X, TEXT_Y + TEXT_GAP);
 
   let maxTime = getMaxElement(times);
 
-  names.forEach(function (name, index) {
-    if (name === `Вы`) {
-      ctx.fillStyle = `rgba(255, 0, 0, 1)`;
-    } else {
-      ctx.fillStyle = renderRandomColor();
-    }
+  names.forEach((name, index) => {
 
-    renderRect(ctx, BAR_X + (BAR_WIDTH + GAP) * index, BAR_Y, BAR_WIDTH, -BAR_HEIGHT * times[index] / maxTime);
-    setTextStyle(ctx, `16px PT Mono`, `#000`,
+    renderRect(ctx, BAR_X + (BAR_WIDTH + GAP) * index, BAR_Y, BAR_WIDTH, -BAR_HEIGHT * times[index] / maxTime,
+        name === `Вы` ? `rgba(255, 0, 0, 1)` : getRandomColor());
+
+    renderText(ctx, `16px PT Mono`, `#000`,
         Math.floor(times[index]), BAR_X + (BAR_WIDTH + GAP) * index, BAR_Y - (BAR_HEIGHT * times[index] / maxTime) - 5,
         name, BAR_X + (BAR_WIDTH + GAP) * index, BAR_Y + 20);
   }
